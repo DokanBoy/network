@@ -8,11 +8,11 @@ class BaseChannelInitializer(
         val connectionManager: ConnectionManager
 ) : ChannelInitializer<SocketChannel>() {
     override fun initChannel(ch: SocketChannel) {
-        val handler = ChannelPacketHandler(connectionManager)
-        val processorDecoder = PacketProcessorDecoder(handler)
-        val processorEncoder = PacketProcessorEncoder(handler)
-        val decoder = PacketDecoder(handler)
-        val encoder = PacketEncoder(handler)
+        val handler = ChannelMessageHandler(connectionManager)
+        val processorDecoder = MessageProcessorDecoder(handler)
+        val processorEncoder = MessageProcessorEncoder(handler)
+        val decoder = MessageDecoder(handler)
+        val encoder = MessageEncoder(handler)
 
         ch.pipeline()
                 .addLast("processorDecoder", processorDecoder)

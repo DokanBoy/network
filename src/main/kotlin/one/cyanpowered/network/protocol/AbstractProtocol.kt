@@ -1,7 +1,7 @@
 package one.cyanpowered.network.protocol
 
-import one.cyanpowered.network.Packet
-import one.cyanpowered.network.PacketHandler
+import one.cyanpowered.network.Message
+import one.cyanpowered.network.MessageHandler
 import one.cyanpowered.network.session.Session
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,10 +13,10 @@ constructor(
         override val name: String,
         val logger: Logger = LoggerFactory.getLogger("Protocol.$name")
 ) : Protocol {
-    abstract fun <S : Session, M : Packet> getPacketHandler(message: Class<M>): PacketHandler<S, M>?
+    abstract fun <S : Session, M : Message> getMessageHandler(message: Class<M>): MessageHandler<S, M>?
 
     companion object
 }
 
-fun <S : Session, M : Packet> AbstractProtocol.getPacketHandler(message: KClass<M>): PacketHandler<S, M>? = getPacketHandler(message.java)
-inline fun <S : Session, reified M : Packet> AbstractProtocol.getPacketHandler() = getPacketHandler<S, M>(M::class)
+fun <S : Session, M : Message> AbstractProtocol.getMessageHandler(message: KClass<M>): MessageHandler<S, M>? = getMessageHandler(message.java)
+inline fun <S : Session, reified M : Message> AbstractProtocol.getMessageHandler() = getMessageHandler<S, M>(M::class)

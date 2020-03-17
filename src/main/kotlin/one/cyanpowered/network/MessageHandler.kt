@@ -2,8 +2,8 @@ package one.cyanpowered.network
 
 import one.cyanpowered.network.session.Session
 
-interface PacketHandler<S : Session, P : Packet> {
-    fun handle(session: S, packet: P)
+interface MessageHandler<S : Session, M : Message> {
+    fun handle(session: S, message: M)
 
     companion object
 }

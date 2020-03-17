@@ -5,7 +5,7 @@ package one.cyanpowered.network
 import io.netty.buffer.ByteBuf
 import java.io.IOException
 
-interface Codec<T : Packet> {
+interface Codec<T : Message> {
     @Throws(IOException::class)
     fun decode(byteBuf: ByteBuf): T
 
@@ -20,5 +20,5 @@ data class CodecRegistration(
         val rawCodec: Codec<*>
 ) {
     @Suppress("UNCHECKED_CAST")
-    fun <M : Packet> getCodec(): Codec<M> = rawCodec as Codec<M>
+    fun <M : Message> getCodec(): Codec<M> = rawCodec as Codec<M>
 }

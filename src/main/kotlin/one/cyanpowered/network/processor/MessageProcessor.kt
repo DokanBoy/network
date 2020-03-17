@@ -3,7 +3,7 @@ package one.cyanpowered.network.processor
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 
-interface PacketProcessor {
+interface MessageProcessor {
     /**
      * [ByteBuf.release] should NOT be called; it's done externally
      *

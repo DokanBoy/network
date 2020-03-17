@@ -3,10 +3,10 @@ package one.cyanpowered.network.pipeline
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToMessageEncoder
-import one.cyanpowered.network.processor.PacketProcessor
+import one.cyanpowered.network.processor.MessageProcessor
 
-class PacketProcessorEncoder(private val packetHandler: ChannelPacketHandler) : MessageToMessageEncoder<ByteBuf>() {
-    val processor: PacketProcessor? get() = packetHandler.session?.processor
+class MessageProcessorEncoder(private val messageHandler: ChannelMessageHandler) : MessageToMessageEncoder<ByteBuf>() {
+    val processor: MessageProcessor? get() = messageHandler.session?.processor
 
     @Throws(Exception::class)
     override fun encode(ctx: ChannelHandlerContext, byteBuf: ByteBuf, output: MutableList<Any>) {

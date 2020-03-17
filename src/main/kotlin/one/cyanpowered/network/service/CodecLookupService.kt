@@ -2,22 +2,22 @@ package one.cyanpowered.network.service
 
 import one.cyanpowered.network.Codec
 import one.cyanpowered.network.CodecRegistration
-import one.cyanpowered.network.Packet
+import one.cyanpowered.network.Message
 import one.cyanpowered.network.exception.IllegalOpcodeException
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.atomic.AtomicInteger
 
-class CodecLookupService(size: Int) {
-    private val packets: ConcurrentMap<Class<out Packet>, CodecRegistration>
+class CodecLookupService(size: Int = 0) {
+    private val messages: ConcurrentMap<Class<out Message>, CodecRegistration>
     private var opcodes: ConcurrentMap<Int, Codec<*>>?
     private val opcodeTable: Array<Codec<*>?>?
     private val nextId: AtomicInteger
 
     init {
         require(size >= 0) { "Size cannot be less than 0!" }
-        packets = ConcurrentHashMap()
+        messages = ConcurrentHashMap()
         if (size == 0) {
             opcodes = ConcurrentHashMap()
             opcodeTable = null
@@ -30,10 +30,10 @@ class CodecLookupService(size: Int) {
 
     @Throws(InstantiationException::class, IllegalAccessException::class, InvocationTargetException::class)
     @JvmOverloads
-    fun <M : Packet> bind(packetClazz: Class<M>, codec: Codec<M>, opcode: Int? = null): CodecRegistration {
+    fun <M : Message> bind(messageClazz: Class<M>, codec: Codec<M>, opcode: Int? = null): CodecRegistration {
         @Suppress("NAME_SHADOWING")
         var opcode = opcode
-        var reg = packets[packetClazz]
+        var reg = messages[messageClazz]
 
         if (reg != null) {
             return reg
@@ -59,7 +59,7 @@ class CodecLookupService(size: Int) {
         }
         put(opcode, codec)
         reg = CodecRegistration(opcode, codec)
-        packets[packetClazz] = reg
+        messages[messageClazz] = reg
         return reg
     }
 
@@ -88,7 +88,7 @@ class CodecLookupService(size: Int) {
     @Throws(IllegalOpcodeException::class)
     fun find(opcode: Int): Codec<*> = get(opcode) ?: throw IllegalOpcodeException("Opcode $opcode is not bound!")
 
-    fun <M : Packet> find(clazz: Class<M>): CodecRegistration = packets[clazz]!!
+    fun <M : Message> find(clazz: Class<M>): CodecRegistration = messages[clazz]!!
 
-    override fun toString(): String = "CodecLookupService{messages=$packets, opcodes=$opcodes}"
+    override fun toString(): String = "CodecLookupService{messages=$messages, opcodes=$opcodes}"
 }

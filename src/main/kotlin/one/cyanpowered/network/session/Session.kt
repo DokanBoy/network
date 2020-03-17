@@ -1,23 +1,23 @@
 package one.cyanpowered.network.session
 
-import one.cyanpowered.network.Packet
+import one.cyanpowered.network.Message
 import one.cyanpowered.network.exception.ChannelClosedException
-import one.cyanpowered.network.processor.PacketProcessor
+import one.cyanpowered.network.processor.MessageProcessor
 import one.cyanpowered.network.protocol.Protocol
 import org.slf4j.Logger
 
 interface Session {
-    fun <T : Packet> packetReceived(message: T)
+    fun <M : Message> messageReceived(message: M)
 
     val logger: Logger
     val protocol: Protocol
-    val processor: PacketProcessor? get() = null
+    val processor: MessageProcessor? get() = null
 
     @Throws(ChannelClosedException::class)
-    fun send(packet: Packet)
+    fun send(message: Message)
 
     @Throws(ChannelClosedException::class)
-    fun sendAll(vararg packets: Packet)
+    fun sendAll(vararg messages: Message)
 
     fun disconnect()
     fun onDisconnect()

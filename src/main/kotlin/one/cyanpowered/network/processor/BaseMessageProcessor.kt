@@ -4,9 +4,9 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import kotlin.math.min
 
-abstract class BasePacketProcessor(
+abstract class BaseMessageProcessor(
         val capacity: Int
-) : PacketProcessor {
+) : MessageProcessor {
     private val decodingByteBuffer: ByteArray = ByteArray(capacity)
     private val encodingByteBuffer: ByteArray = ByteArray(capacity)
 

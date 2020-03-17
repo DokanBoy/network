@@ -2,8 +2,8 @@ package one.cyanpowered.network.session
 
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFuture
-import one.cyanpowered.network.Packet
-import one.cyanpowered.network.PacketHandler
+import one.cyanpowered.network.Message
+import one.cyanpowered.network.MessageHandler
 import one.cyanpowered.network.exception.ChannelClosedException
 import one.cyanpowered.network.protocol.AbstractProtocol
 import org.slf4j.Logger
@@ -19,40 +19,40 @@ open class BaseSession(
     val isActive: Boolean
         get() = channel.isActive
 
-    private fun handlePacket(packet: Packet) {
-        val messageClass = packet.javaClass
-        val handler = protocol.getPacketHandler<Session,Packet>(messageClass)
+    private fun handleMessage(message: Message) {
+        val messageClass = message.javaClass
+        val handler = protocol.getMessageHandler<Session,Message>(messageClass)
         if (handler != null) {
             try {
-                handler.handle(this, packet)
+                handler.handle(this, message)
             } catch (t: Throwable) {
-                onHandlerThrowable(packet, handler, t)
+                onHandlerThrowable(message, handler, t)
             }
         }
     }
 
-    override fun <T : Packet> packetReceived(message: T) {
-        handlePacket(message)
+    override fun <M : Message> messageReceived(message: M) {
+        handleMessage(message)
     }
 
     @Throws(ChannelClosedException::class)
-    fun sendWithFuture(packet: Packet): ChannelFuture {
+    fun sendWithFuture(message: Message): ChannelFuture {
         if (!channel.isActive) {
             throw ChannelClosedException("Trying to send a message when a session is inactive!")
         }
-        return channel.writeAndFlush(packet).addListener {
+        return channel.writeAndFlush(message).addListener {
             if (it.cause() != null) {
                 onOutboundThrowable(it.cause())
             }
         }
     }
 
-    override fun send(packet: Packet) {
-        sendWithFuture(packet)
+    override fun send(message: Message) {
+        sendWithFuture(message)
     }
 
-    override fun sendAll(vararg packets: Packet) {
-        for (message in packets) {
+    override fun sendAll(vararg messages: Message) {
+        for (message in messages) {
             send(message)
         }
     }
@@ -72,5 +72,5 @@ open class BaseSession(
     fun onOutboundThrowable(throwable: Throwable?) {}
 
 
-    fun onHandlerThrowable(packet: Packet, handler: PacketHandler<*, *>, throwable: Throwable) {}
+    fun onHandlerThrowable(message: Message, handler: MessageHandler<*, *>, throwable: Throwable) {}
 }

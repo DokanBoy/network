@@ -1,6 +1,6 @@
 package one.cyanpowered.network.exception
 
-class UnknownPacketException(
+class UnknownMessageException(
         message: String,
         val opcode: Int,
         val length: Int
